@@ -276,7 +276,7 @@ Client.templates_dir = function(self, workspace)
   return nil
 end
 
---- Determines whether a note's frontmatter is managed by obsidian.nvim.
+--- Determines whether a note's frontmatter is created by obsidian.nvim.
 ---
 ---@param note obsidian.Note
 ---
@@ -295,10 +295,38 @@ Client.should_save_frontmatter = function(self, note)
 
   if not note:should_save_frontmatter() then
     return false
-  elseif type(self.opts.disable_frontmatter) == "boolean" then
-    return not self.opts.disable_frontmatter
-  elseif type(self.opts.disable_frontmatter) == "function" then
-    return not self.opts.disable_frontmatter(tostring(self:vault_relative_path(note.path, { strict = true })))
+  elseif type(self.opts.disable_frontmatter_creation) == "boolean" then
+    return not self.opts.disable_frontmatter_creation
+  elseif type(self.opts.disable_frontmatter_creation) == "function" then
+    return not self.opts.disable_frontmatter_creation(tostring(self:vault_relative_path(note.path, { strict = true })))
+  else
+    return true
+  end
+end
+
+--- Determines whether a note's frontmatter can be updated obsidian.nvim
+---
+---@param note obsidian.Note
+---
+---@return boolean
+Client.should_update_frontmatter = function(self, note)
+  -- Check if the note is a template.
+  local templates_dir = self:templates_dir()
+  if templates_dir ~= nil then
+    templates_dir = templates_dir:resolve()
+    for _, parent in ipairs(note.path:parents()) do
+      if parent == templates_dir then
+        return false
+      end
+    end
+  end
+
+  if not note:should_save_frontmatter() then
+    return false
+  elseif type(self.opts.disable_frontmatter_update) == "boolean" then
+    return not self.opts.disable_frontmatter_update
+  elseif type(self.opts.disable_frontmatter_update) == "function" then
+    return not self.opts.disable_frontmatter_update(tostring(self:vault_relative_path(note.path, { strict = true })))
   else
     return true
   end
@@ -1901,7 +1929,7 @@ end
 ---
 ---@return boolean updated If the the frontmatter was updated.
 Client.update_frontmatter = function(self, note, bufnr)
-  if not self:should_save_frontmatter(note) then
+  if not self:should_update_frontmatter(note) then
     return false
   end
 

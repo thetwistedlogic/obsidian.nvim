@@ -42,7 +42,7 @@ describe("Client", function()
 
   it("should not add frontmatter for today when disabled", function()
     with_tmp_client(function(client)
-      client.opts.disable_frontmatter = true
+      client.opts.disable_frontmatter_creation = true
       local new_note = client:today()
 
       local saved_note = Note.from_file(new_note.path)
@@ -52,7 +52,7 @@ describe("Client", function()
 
   it("should not add frontmatter for yesterday when disabled", function()
     with_tmp_client(function(client)
-      client.opts.disable_frontmatter = true
+      client.opts.disable_frontmatter_creation = true
       local new_note = client:yesterday()
 
       local saved_note = Note.from_file(new_note.path)

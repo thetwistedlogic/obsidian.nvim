@@ -18,7 +18,8 @@ local config = {}
 ---@field follow_url_func fun(url: string)|?
 ---@field follow_img_func fun(img: string)|?
 ---@field note_frontmatter_func (fun(note: obsidian.Note): table)|?
----@field disable_frontmatter (fun(fname: string?): boolean)|boolean|?
+---@field disable_frontmatter_creation (fun(fname: string?): boolean)|boolean|?
+---@field disable_frontmatter_update (fun(fname: string?): boolean)|boolean|?
 ---@field completion obsidian.config.CompletionOpts
 ---@field mappings obsidian.config.MappingOpts
 ---@field picker obsidian.config.PickerOpts
@@ -52,6 +53,7 @@ config.ClientOpts.default = function()
     follow_url_func = nil,
     note_frontmatter_func = nil,
     disable_frontmatter = false,
+    update_frontmatter = false,
     completion = config.CompletionOpts.default(),
     mappings = config.MappingOpts.default(),
     picker = config.PickerOpts.default(),
